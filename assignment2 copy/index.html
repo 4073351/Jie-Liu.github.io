@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-     <link href="https://fonts.googleapis.com/css2?family=Winky+Sans&display=swap" rel="stylesheet"/>
  
     <style>
       body {
@@ -249,7 +248,11 @@
         </div>
       </div>
 
-
+      <!-- change to Winky Sans  -->
+      <link
+        href="https://fonts.googleapis.com/css2?family=Winky+Sans&display=swap"
+        rel="stylesheet"
+      />
 
       <!-- Timer Section -->
       <section style="text-align: center; margin-top: 40px">
@@ -291,7 +294,7 @@
               padding: 10px 20px;
               margin-right: 10px;
               border-radius: 10px;
-              background: #4c4a7f;
+              background: #342da9;
               color: white;
               border: none;
             "
@@ -304,7 +307,7 @@
               font-size: 1.2rem;
               padding: 10px 20px;
               border-radius: 10px;
-              background: #4c4a7f;
+              background: #5e5e5e;
               color: white;
               border: none;
             "
@@ -397,10 +400,10 @@
               repeatBtn.classList.remove("active");
 
               endSound.currentTime = 0;
-endSound.play();
-alert("Time is up! 🎉");
-
-              
+              endSound.play();
+              alert("Time is up!");
+              endSound.pause();
+              endSound.currentTime = 0;
             }
           }, 1000);
         });
@@ -441,7 +444,6 @@ alert("Time is up! 🎉");
       </p>
     </footer>
 
-    
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const video = document.getElementById("custom-video-player");
@@ -690,18 +692,24 @@ setInterval(updateMelbourneClock, 60000);
 </html>
 
 <!-- 
-  This webpage is a redesigned version of the original media player site, created to provide a calm and immersive environment for studying, working, or relaxing.  Named “MuseFlow: Music for Focus & Calm”, the site integrates ambient video with synchronized background music and a customizable countdown timer, helping users manage their focus sessions effectively.
 
-Users can set a specific study duration using the timer.  Once started, both the video and music begin to play in sync, and the playback and repeat (loop) modes are automatically activated.  When the countdown ends, all media playback stops, accompanied by a soft sound effect to indicate the end of the session.  Another sound plays at the start to provide subtle auditory feedback.
 
-The interface has been visually optimized with a dark background, soft purple tones, improved typography, and a clean layout.  The video player also supports keyboard shortcuts for controlling playback — including play/pause (space), fast forward/backward (arrow keys), and fullscreen toggle (F key).
+This webpage has been restructured based on the original media player template, with the goal of creating a music video platform focused on relaxation and study scenarios.
 
-Additional enhancements include:
+The main modifications are as follows:
 
-Replacing the default background music with a relaxing ambient track.
+The page title has been changed to “MuseFlow: Music for Focus & Calm” to clearly emphasize its intended use.
 
-Enlarging and centering the video for better focus.
+The original video music was removed and replaced with a new external audio link. A synchronization feature was also added to ensure the video and background music play in sync.
 
-A live display of the current Melbourne time at the bottom of the page, offering a gentle reminder of the present moment.
+A countdown timer function has been introduced, allowing users to set a desired duration. When “Start” is clicked, both video and audio begin playing, and automatically pause when the timer reaches zero.
 
-Overall, MuseFlow transforms the original media player into a focused, minimalistic digital space that supports mindfulness, productivity, and time management during study or relaxation.
+Two sound effects were added: 1.mp3 plays when the “Start” or “Restart” button is clicked, and 2.mp3 plays when the countdown ends (with volume reduced to 0.3 to avoid being too intrusive).
+
+The UI design has been improved, featuring a black background, purple text, blue progress bar, and white icons, creating a calm and focused atmosphere.
+
+Custom control buttons beneath the video now include Play/Pause, Fast Forward (20s), Rewind (20s), and Repeat.
+
+Keyboard controls were added, allowing users to play/pause, skip forward/backward, and enter/exit fullscreen using key commands.
+
+These changes significantly enhance the functionality and immersive experience of the site, making it more suitable for activities like studying, writing, or focused work.
