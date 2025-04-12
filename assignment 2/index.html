@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Media Player</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+ 
+    <style>
+      body {
+        background-color: black;
+        color: white;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      header {
+        text-align: center;
+        padding: 20px 0;
+      }
+
+      h1 {
+        font-family: "Kalnia", "Noto Color Emoji", serif;
+        margin: 0;
+        font-size: 3rem;
+        color: #b0bef0;
+        text-shadow: 2px 2px 4px rgba(124, 69, 188, 0.5);
+      }
+
+      .media-player video {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .container {
+        max-width: 100%;
+        padding: 0 15px;
+        box-sizing: border-box;
+      }
+
+      footer {
+        text-align: center;
+        padding: 20px;
+      }
+
+      footer p {
+        margin: 0;
+      }
+
+      /* Volume control */
+      .custom-controls {
+        display: flex;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        gap: 10px;
+      }
+
+      .control-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background-color 0.2s;
+      }
+
+      .control-btn:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .control-btn.active {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .control-btn img {
+        width: 24px;
+        height: 24px;
+        filter: invert(1);
+      }
+
+      .progress-bar {
+        flex-grow: 1;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+        cursor: pointer;
+      }
+
+      #progress-bar-fill {
+        display: block;
+        height: 100%;
+        background: #342da9;
+        border-radius: 2px;
+        width: 0%;
+      }
+
+      /* Volume control */
+      .volume-control {
+        display: flex;
+        align-items: center;
+        position: relative;
+      }
+
+      .volume-slider {
+        width: 0;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+        margin-left: 5px;
+        transform-origin: left center;
+        transform: scaleX(0);
+        transition: width 0.2s, transform 0.2s;
+      }
+
+      .volume-slider.active {
+        width: 80px;
+        transform: scaleX(1);
+      }
+
+      .volume-slider-fill {
+        height: 100%;
+        background: #342da9;
+        border-radius: 2px;
+        width: 100%;
+      }
+
+      .volume-slider-handle {
+        width: 12px;
+        height: 12px;
+        background: white;
+        border-radius: 50%;
+        position: absolute;
+        right: -6px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      .volume-slider:hover .volume-slider-handle,
+      .volume-slider.dragging .volume-slider-handle {
+        opacity: 1;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header Section -->
+    <header>
+      <h1>🎵 MuseFlow: Music for Focus & Calm🎵</h1>
+    </header>
+
+    <!-- Main Content Section -->
+    <main class="container">
+      <!-- Media Player Section -->
+      <div class="media-player">
+        <video id="custom-video-player" muted>
+          <source
+            src="https://thelongesthumstore.sgp1.cdn.digitaloceanspaces.com/IM-2250/miac.mp4"
+            type="video/mp4"
+          />
+        </video>
+        <audio id="background-music">
+          <source
+            src="https://thelongesthumstore.sgp1.cdn.digitaloceanspaces.com/IM-2250/erokia_ambient-wave-56-msfxp7-78.mp3"
+            type="audio/mpeg"
+          />
+        </audio>
+
+        <div class="custom-controls">
+          <button id="play-btn" class="control-btn" title="播放/暂停">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="white"
+              width="24px"
+              height="24px"
+            >
+              <path id="play-icon" d="M8 5v14l11-7z" />
+              <path
+                id="pause-icon"
+                d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"
+                style="display: none"
+              />
+            </svg>
+          </button>
+          <button id="rewind-btn" class="control-btn" title="后退20秒">
+            <img src="images/icons8-rewind-30.png" alt="后退" />
+          </button>
+          <button id="fast-forward-btn" class="control-btn" title="快进20秒">
+            <img src="images/icons8-fast-forward-30.png" alt="快进" />
+          </button>
+          <button id="repeat-btn" class="control-btn" title="循环播放">
+            <img src="images/icons8-repeat-30.png" alt="循环" />
+          </button>
+          <div class="progress-bar">
+            <span id="progress-bar-fill"></span>
+          </div>
+          <div class="volume-control">
+            <button id="volume-btn" class="control-btn" title="音量">
+              <svg
+                id="volume-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="white"
+                width="24px"
+                height="24px"
+              >
+                <path
+                  id="volume-high"
+                  d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+                />
+                <path
+                  id="volume-mute"
+                  d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"
+                  style="display: none"
+                />
+              </svg>
+            </button>
+            <div class="volume-slider">
+              <div class="volume-slider-fill"></div>
+              <div class="volume-slider-handle"></div>
+            </div>
+          </div>
+          <button id="fullscreen-btn" class="control-btn" title="全屏">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="white"
+              width="20px"
+              height="20px"
+            >
+              <path
+                d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- change to Winky Sans  -->
+      <link
+        href="https://fonts.googleapis.com/css2?family=Winky+Sans&display=swap"
+        rel="stylesheet"
+      />
+
+      <!-- Timer Section -->
+      <section style="text-align: center; margin-top: 40px">
+        <h2
+          style="
+            font-family: 'Winky Sans', sans-serif;
+            font-size: 2.8rem;
+            color: white;
+            margin-bottom: 10px;
+          "
+        >
+          Timer
+        </h2>
+
+        <div
+          id="timer"
+          style="
+            font-size: 3rem;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px auto;
+            font-family: 'Winky Sans', sans-serif;
+            color: white;
+          "
+        >
+          <span class="digit" data-index="0" style="cursor: pointer">0</span>
+          <span class="digit" data-index="1" style="cursor: pointer">0</span>
+          <span>:</span>
+          <span class="digit" data-index="2" style="cursor: pointer">0</span>
+          <span class="digit" data-index="3" style="cursor: pointer">0</span>
+        </div>
+
+        <div style="margin-top: 20px">
+          <button
+            id="start-btn"
+            style="
+              font-size: 1.2rem;
+              padding: 10px 20px;
+              margin-right: 10px;
+              border-radius: 10px;
+              background: #342da9;
+              color: white;
+              border: none;
+            "
+          >
+            Start
+          </button>
+          <button
+            id="restart-btn"
+            style="
+              font-size: 1.2rem;
+              padding: 10px 20px;
+              border-radius: 10px;
+              background: #5e5e5e;
+              color: white;
+              border: none;
+            "
+          >
+            Restart
+          </button>
+        </div>
+      </section>
+
+      <!-- Timer Script -->
+      <script>
+        const digits = document.querySelectorAll(".digit");
+        const startBtn = document.getElementById("start-btn");
+        const restartBtn = document.getElementById("restart-btn");
+        const video = document.getElementById("custom-video-player");
+        const audio = document.getElementById("background-music");
+        const playIcon = document.getElementById("play-icon");
+        const pauseIcon = document.getElementById("pause-icon");
+
+        // sound effect
+        const startSound = new Audio("audio/1.mp3");
+        const endSound = new Audio("audio/2.mp3");
+        endSound.volume = 0.2; // Turn down the volume
+
+        let timerInterval = null;
+        let currentSeconds = 0;
+
+        function updateTimeFromDigits() {
+          const mins =
+            parseInt(digits[0].textContent) * 10 +
+            parseInt(digits[1].textContent);
+          const secs =
+            parseInt(digits[2].textContent) * 10 +
+            parseInt(digits[3].textContent);
+          currentSeconds = mins * 60 + secs;
+        }
+
+        function updateTimerDisplay() {
+          let mins = Math.floor(currentSeconds / 60);
+          let secs = currentSeconds % 60;
+          digits[0].textContent = Math.floor(mins / 10);
+          digits[1].textContent = mins % 10;
+          digits[2].textContent = Math.floor(secs / 10);
+          digits[3].textContent = secs % 10;
+        }
+
+        digits.forEach((digit) => {
+          digit.addEventListener("click", () => {
+            if (timerInterval) return;
+            let current = parseInt(digit.textContent);
+            digit.textContent = (current + 1) % 10;
+          });
+        });
+
+        startBtn.addEventListener("click", () => {
+          if (timerInterval) return;
+          updateTimeFromDigits();
+          if (currentSeconds <= 0) return;
+
+          // timer start function =playicon
+          video.play();
+          audio.currentTime = video.currentTime;
+          audio.play();
+          playIcon.style.display = "none";
+          pauseIcon.style.display = "";
+
+          // play
+          startSound.currentTime = 0;
+          startSound.play();
+
+          timerInterval = setInterval(() => {
+            if (currentSeconds > 0) {
+              currentSeconds--;
+              updateTimerDisplay();
+            } else {
+              clearInterval(timerInterval);
+              timerInterval = null;
+
+              // stop
+              video.pause();
+              audio.pause();
+              playIcon.style.display = "";
+              pauseIcon.style.display = "none";
+
+              // play end sound，stop after the alert
+              endSound.currentTime = 0;
+              endSound.play();
+              alert("Time is up!");
+              endSound.pause();
+              endSound.currentTime = 0;
+            }
+          }, 1000);
+        });
+
+        restartBtn.addEventListener("click", () => {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          currentSeconds = 0;
+          updateTimerDisplay();
+
+          // Stop video & audio，reset the time
+          video.pause();
+          video.currentTime = 0;
+          audio.pause();
+          audio.currentTime = 0;
+          playIcon.style.display = "";
+          pauseIcon.style.display = "none";
+
+          // sound effect
+          startSound.currentTime = 0;
+          startSound.play();
+
+          endSound.pause();
+          endSound.currentTime = 0;
+        });
+
+        updateTimerDisplay();
+      </script>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+      <p>&copy; 2024 Media Player Website. All rights reserved.</p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const video = document.getElementById("custom-video-player");
+        const audio = document.getElementById("background-music");
+        const playBtn = document.getElementById("play-btn");
+        const rewindBtn = document.getElementById("rewind-btn");
+        const fastForwardBtn = document.getElementById("fast-forward-btn");
+        const repeatBtn = document.getElementById("repeat-btn");
+        const progressBarFill = document.getElementById("progress-bar-fill");
+        const progressBar = document.querySelector(".progress-bar");
+        const fullscreenBtn = document.getElementById("fullscreen-btn");
+        const playIcon = document.getElementById("play-icon");
+        const pauseIcon = document.getElementById("pause-icon");
+        const volumeBtn = document.getElementById("volume-btn");
+        const volumeSlider = document.querySelector(".volume-slider");
+        const volumeSliderFill = document.querySelector(".volume-slider-fill");
+        const volumeHighIcon = document.getElementById("volume-high");
+        const volumeMuteIcon = document.getElementById("volume-mute");
+
+        video.muted = true;
+
+
+
+        playBtn.addEventListener("click", function () {
+          if (video.paused) {
+            video.play();
+            audio.play();
+            playIcon.style.display = "none";
+            pauseIcon.style.display = "";
+          } else {
+            video.pause();
+            audio.pause();
+            playIcon.style.display = "";
+            pauseIcon.style.display = "none";
+          }
+        });
+
+        rewindBtn.addEventListener("click", function () {
+          const newTime = Math.max(0, video.currentTime - 20);
+          video.currentTime = newTime;
+          audio.currentTime = newTime;
+        });
+
+        fastForwardBtn.addEventListener("click", function () {
+          const newTime = Math.min(video.duration, video.currentTime + 20);
+          video.currentTime = newTime;
+          audio.currentTime = newTime;
+        });
+
+        let isRepeat = false;
+        repeatBtn.addEventListener("click", function () {
+          isRepeat = !isRepeat;
+          video.loop = isRepeat;
+          audio.loop = isRepeat;
+          this.classList.toggle("active", isRepeat);
+        });
+
+        video.addEventListener("ended", function () {
+          playIcon.style.display = "";
+          pauseIcon.style.display = "none";
+          if (isRepeat) {
+            video.currentTime = 0;
+            audio.currentTime = 0;
+            video.play();
+            audio.play();
+            playIcon.style.display = "none";
+            pauseIcon.style.display = "";
+          } else {
+            audio.pause();
+          }
+        });
+
+        video.addEventListener("timeupdate", function () {
+          const progress = (video.currentTime / video.duration) * 100;
+          progressBarFill.style.width = progress + "%";
+          if (!isNaN(audio.duration) && audio.duration > 0) {
+            if (Math.abs(audio.currentTime - video.currentTime) > 0.1) {
+              audio.currentTime = video.currentTime;
+            }
+          }
+        });
+
+        progressBar.addEventListener("click", function (e) {
+          const percent = e.offsetX / this.offsetWidth;
+          const newTime = percent * video.duration;
+          video.currentTime = newTime;
+          audio.currentTime = newTime;
+        });
+
+        fullscreenBtn.addEventListener("click", function () {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+          } else {
+            if (document.exitFullscreen) {
+              document.exitFullscreen();
+            }
+          }
+        });
+
+        volumeBtn.addEventListener("click", function () {
+          if (audio.volume > 0) {
+            audio.volume = 0;
+            volumeHighIcon.style.display = "none";
+            volumeMuteIcon.style.display = "";
+          } else {
+            audio.volume = 1;
+            volumeHighIcon.style.display = "";
+            volumeMuteIcon.style.display = "none";
+          }
+          updateVolumeSlider();
+        });
+
+        volumeBtn.addEventListener("mouseenter", function () {
+          volumeSlider.classList.add("active");
+        });
+
+        volumeSlider.addEventListener("mouseleave", function () {
+          if (!this.classList.contains("dragging")) {
+            this.classList.remove("active");
+          }
+        });
+
+        let isDragging = false;
+        volumeSlider.addEventListener("mousedown", function (e) {
+          isDragging = true;
+          this.classList.add("dragging");
+          updateVolume(e);
+        });
+
+        document.addEventListener("mousemove", function (e) {
+          if (isDragging) {
+            updateVolume(e);
+          }
+        });
+
+        document.addEventListener("mouseup", function () {
+          if (isDragging) {
+            isDragging = false;
+            volumeSlider.classList.remove("dragging");
+          }
+        });
+
+        volumeSlider.addEventListener("click", function (e) {
+          updateVolume(e);
+        });
+
+        function updateVolume(e) {
+          const rect = volumeSlider.getBoundingClientRect();
+          let percent = (e.clientX - rect.left) / rect.width;
+          percent = Math.max(0, Math.min(1, percent));
+          audio.volume = percent;
+          volumeSliderFill.style.width = percent * 100 + "%";
+          if (percent === 0) {
+            volumeHighIcon.style.display = "none";
+            volumeMuteIcon.style.display = "";
+          } else {
+            volumeHighIcon.style.display = "";
+            volumeMuteIcon.style.display = "none";
+          }
+        }
+
+        function updateVolumeSlider() {
+          const percent = audio.volume;
+          volumeSliderFill.style.width = percent * 100 + "%";
+        }
+
+        audio.volume = 1;
+        updateVolumeSlider();
+        audio.load();
+
+        //  Keyboard control
+        document.addEventListener("keydown", function (e) {
+          const tag = document.activeElement.tagName.toLowerCase();
+          if (tag === "input" || tag === "textarea") return;
+
+          switch (e.key) {
+            case " ": // space for play or pause
+              e.preventDefault();
+              if (video.paused) {
+                video.play();
+                audio.currentTime = video.currentTime;
+                audio.play();
+                playIcon.style.display = "none";
+                pauseIcon.style.display = "";
+              } else {
+                video.pause();
+                audio.pause();
+                playIcon.style.display = "";
+                pauseIcon.style.display = "none";
+              }
+              break;
+
+            case "ArrowLeft": // go back
+              video.currentTime = Math.max(0, video.currentTime - 20);
+              audio.currentTime = video.currentTime;
+              break;
+
+            case "ArrowRight": // go fast
+              video.currentTime = Math.min(
+                video.duration,
+                video.currentTime + 20
+              );
+              audio.currentTime = video.currentTime;
+              break;
+
+            case "f":
+            case "F": // go to full screem
+              if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+              } else {
+                document.exitFullscreen();
+              }
+              break;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
+
+<!-- 
+
+
+This webpage has been restructured based on the original media player template, with the goal of creating a music video platform focused on relaxation and study scenarios.
+
+The main modifications are as follows:
+
+The page title has been changed to “MuseFlow: Music for Focus & Calm” to clearly emphasize its intended use.
+
+The original video music was removed and replaced with a new external audio link. A synchronization feature was also added to ensure the video and background music play in sync.
+
+A countdown timer function has been introduced, allowing users to set a desired duration. When “Start” is clicked, both video and audio begin playing, and automatically pause when the timer reaches zero.
+
+Two sound effects were added: 1.mp3 plays when the “Start” or “Restart” button is clicked, and 2.mp3 plays when the countdown ends (with volume reduced to 0.3 to avoid being too intrusive).
+
+The UI design has been improved, featuring a black background, purple text, blue progress bar, and white icons, creating a calm and focused atmosphere.
+
+Custom control buttons beneath the video now include Play/Pause, Fast Forward (20s), Rewind (20s), and Repeat.
+
+Keyboard controls were added, allowing users to play/pause, skip forward/backward, and enter/exit fullscreen using key commands.
+
+These changes significantly enhance the functionality and immersive experience of the site, making it more suitable for activities like studying, writing, or focused work.
