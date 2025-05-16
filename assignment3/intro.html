@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brief Introduction</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+        color: #ffffff;
+        text-align: center;
+        background: url("_ (1).jpeg") center top/cover no-repeat;
+        background-attachment: fixed;
+        cursor: none;
+        overflow-x: hidden;
+      }
+
+      h1 {
+        font-size: 3rem;
+        margin-top: 60px;
+        background: linear-gradient(90deg, #ff4d4d, #ffd93d, #4da6ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 5s infinite;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      h2 {
+        font-size: 2rem;
+        margin-bottom: 40px;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+      }
+
+      p {
+        font-size: 1rem;
+        color: #cccccc;
+        max-width: 700px;
+        margin: 20px auto;
+      }
+
+      img {
+        width: 300px;
+        border-radius: 20px;
+        margin: 20px;
+      }
+
+      .intro-block,
+      .info-block {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 60px;
+        background-color: rgba(0, 0, 0, 0.6);
+        border-radius: 20px;
+        padding: 40px 20px;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
+        z-index: 2;
+      }
+
+      .info-block {
+        flex-direction: column;
+      }
+
+      .start-btn {
+        display: inline-block;
+        margin: 40px auto;
+        padding: 15px 40px;
+        background: linear-gradient(135deg, #ff4d4d, #ffd93d, #4da6ff);
+        color: white;
+        font-size: 1.2rem;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        position: relative;
+        z-index: 2;
+      }
+
+      .start-btn:hover {
+        transform: scale(1.1);
+      }
+
+      .music-note {
+        position: fixed;
+        opacity: 0.5;
+        font-size: 24px;
+        animation: falling linear forwards;
+        z-index: 9998;
+        pointer-events: none;
+      }
+
+      .cursor {
+        position: fixed;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        z-index: 9999;
+        mix-blend-mode: screen;
+      }
+
+      @keyframes falling {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0.5;
+        }
+        100% {
+          transform: translateY(100vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 自定义光标 -->
+    <div class="cursor"></div>
+
+    <h1>Brief Introduction</h1>
+    <h2>Kandinsky's Masterpieces That Inspire This Test</h2>
+
+    <div class="intro-block">
+      <img src="Picture 1.jpg" alt="Blue Mountain" />
+      <div>
+        <h3>《Blue Mountain, No. 84》 - 1909</h3>
+        <p>
+          A romantic work rooted in pointillism, featuring vibrant colors and
+          symbolic horsemen. It reflects a journey toward spiritual freedom and
+          emotional expression.
+        </p>
+      </div>
+    </div>
+
+    <div class="intro-block">
+      <img src="Picture 2.jpg" alt="Improvisation No. 31" />
+      <div>
+        <h3>《Improvisation No. 31》 - 1913</h3>
+        <p>
+          A dynamic explosion of rose, crimson, and azure, filled with energetic
+          lines and abstract forms. This piece embodies inner harmony and the
+          rhythm of a visual symphony.
+        </p>
+      </div>
+    </div>
+
+    <div class="intro-block">
+      <img src="Picture 3.jpg" alt="Yellow - Red - Blue" />
+      <div>
+        <h3>《Yellow - Red - Blue》 - 1925</h3>
+        <p>
+          Created during Kandinsky's Bauhaus period, this geometric masterpiece
+          contrasts vivid colors and shapes, creating a powerful sense of rhythm
+          and visual tension.
+        </p>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <h2>🎧 How It Works</h2>
+      <p>
+        Listen to <strong>10 sets of soundscapes</strong> carefully curated to
+        evoke emotional responses.<br /><br />
+        Select the sound that feels most connected to the color and scene.<br /><br />
+        Reveal your <strong>artistic personality type</strong> at the end!
+      </p>
+
+      <h2>🕒 Estimated Time</h2>
+      <p>About <strong>5-7 minutes</strong>.</p>
+
+      <h2>📢 Pro Tip</h2>
+      <p>
+        For the best experience, <strong>wear headphones</strong> and relax.<br /><br />
+        Follow your <strong>first instinct</strong>—there are no right or wrong
+        answers!
+      </p>
+    </div>
+
+    <!-- 跳转到 test.html -->
+    <button class="start-btn" onclick="location.href='test.html'">
+      Begin Your Artistic Journey
+    </button>
+
+    <script>
+      let mouseX = 0;
+      let mouseY = 0;
+      const cursor = document.querySelector(".cursor");
+
+      document.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      function updateCursor() {
+        cursor.style.left = `${mouseX}px`;
+        cursor.style.top = `${mouseY}px`;
+        requestAnimationFrame(updateCursor);
+      }
+      updateCursor();
+
+      let lastNoteTime = 0;
+      const NOTE_INTERVAL = 300;
+
+      document.addEventListener("mousemove", () => {
+        const now = Date.now();
+        if (now - lastNoteTime > NOTE_INTERVAL) {
+          createMusicNote();
+          lastNoteTime = now;
+        }
+      });
+
+      function createMusicNote() {
+        const notes = ["♪", "♫", "♩", "♬", "♭", "♮"];
+        const colors = ["#ff4d4d", "#ffd93d", "#4da6ff"];
+
+        const note = document.createElement("div");
+        note.className = "music-note";
+        note.textContent = notes[Math.floor(Math.random() * notes.length)];
+        note.style.color = colors[Math.floor(Math.random() * colors.length)];
+        note.style.left = `${mouseX}px`;
+        note.style.top = `${mouseY}px`;
+        note.style.fontSize = `${Math.random() * 20 + 16}px`;
+        note.style.animationDuration = `${Math.random() * 5 + 5}s`;
+
+        document.body.appendChild(note);
+        setTimeout(() => note.remove(), 8000);
+      }
+    </script>
+  </body>
+</html>

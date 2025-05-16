@@ -3,252 +3,292 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Assignment 1 —— Luni App</title>
+    <title>Synesthesia Experience</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Arrows&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
       rel="stylesheet"
     />
-
     <style>
+      /* 页面基础样式 */
       body {
-        font-family: "Helvetica Neue", sans-serif;
-        background-color: #f9f6ff;
-        color: #4e4a5a;
-        padding: 40px;
-        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: #0e0e0e;
+        font-family: "Poppins", sans-serif;
+        color: white;
+        overflow: hidden;
+        cursor: none;
       }
 
       h1 {
-        font-family: "Edu AU VIC WA NT Arrows", cursive;
         text-align: center;
-        font-size: 3rem;
-        color: #bb99ed;
-        margin-bottom: 40px;
+        font-size: 3.5rem;
+        margin-top: 100px;
+        background: linear-gradient(90deg, #ff4d4d, #ffd93d, #4da6ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 5s infinite;
+      }
+
+      p {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #4da6ff; /* 修改为蓝色，与圆形相同 */
+        margin-top: 20px;
+      }
+
+      .start-btn {
+        display: block;
+        margin: 80px auto;
+        padding: 15px 40px;
+        background: linear-gradient(135deg, #ff4d4d, #ffd93d, #4da6ff);
+        color: white;
+        font-size: 1.5rem;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        box-shadow: 0 0 20px rgba(255, 77, 77, 0.5);
+        animation: pulse 2s infinite;
+      }
+
+      .start-btn:hover {
+        transform: scale(1.1);
+      }
+
+      .circle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.6;
+        animation: float 15s infinite linear;
+        transition: all 0.5s ease;
+        cursor: pointer;
       }
 
       .image-container {
-        text-align: center;
-        margin-bottom: 30px;
-        position: relative;
-        display: inline-block;
-        width: 100%;
+        position: absolute;
+        border-radius: 50%;
+        overflow: hidden;
+        transition: all 0.5s ease;
+        pointer-events: none;
+        opacity: 0;
       }
 
       .image-container img {
-        max-width: 100%;
-        height: auto;
-        display: block;
-        margin: 0 auto;
-      }
-
-      .image-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(255, 255, 255, 0);
-        transition: background-color 0.3s ease;
-        cursor: pointer;
+        object-fit: cover;
       }
 
-      .image-container:hover .image-overlay {
-        background-color: rgba(255, 255, 255, 0.2);
+      .music-note {
+        position: absolute;
+        opacity: 0.5;
+        font-size: 24px;
+        animation: falling linear forwards;
+        z-index: -1;
+        pointer-events: none;
       }
 
-      details {
-        margin-bottom: 20px;
-        border: 1px solid #c4b3ec;
-        border-radius: 8px;
-        background-color: #ede9f8;
-        box-shadow: 0 2px 8px rgba(187, 153, 237, 0.2);
+      .cursor {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        z-index: 9999;
+        mix-blend-mode: screen;
       }
 
-      summary {
-        cursor: pointer;
-        padding: 16px 20px;
-        font-weight: bold;
-        font-size: 1.1rem;
-        background-color: #dcd2f2;
-        color: #333366;
-        border-radius: 8px 8px 0 0;
-        list-style: none;
-        transition: background-color 0.3s ease;
+      /* 放大后的圆形尺寸 */
+      .circle.red {
+        background: #ff4d4d;
+        width: 150px;
+        height: 150px;
+        top: 20%;
+        left: 10%;
+      }
+      .circle.yellow {
+        background: #ffd93d;
+        width: 180px;
+        height: 180px;
+        top: 50%;
+        left: 70%;
+      }
+      .circle.blue {
+        background: #4da6ff;
+        width: 160px;
+        height: 160px;
+        top: 70%;
+        left: 30%;
       }
 
-      summary:hover {
-        background-color: #c9b3eb;
+      @keyframes float {
+        0% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-50px) rotate(180deg);
+        }
+        100% {
+          transform: translateY(0) rotate(360deg);
+        }
       }
 
-      .answer-box {
-        padding: 18px 20px;
-        background-color: #ffffff;
-        color: #4e4a5a;
-        border-top: 1px solid #ccc;
-        border-radius: 0 0 8px 8px;
+      @keyframes falling {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0.5;
+        }
+        100% {
+          transform: translateY(calc(100vh + 50px)) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 40px rgba(255, 77, 77, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 80px rgba(255, 217, 61, 0.7);
+        }
+        100% {
+          box-shadow: 0 0 20px rgba(255, 77, 77, 0.5);
+        }
       }
     </style>
   </head>
   <body>
-    <h1>Assignment 1 — Luni App</h1>
+    <!-- 动态背景图形 -->
+    <div class="circle red" id="red-circle"></div>
+    <div class="circle yellow" id="yellow-circle"></div>
+    <div class="circle blue" id="blue-circle"></div>
 
-    <div class="image-container">
-      <img src="luni.png" alt="Luni App homepage" />
-      <a href="https://www.luni.app/" class="image-overlay"></a>
+    <!-- 简化后的图片容器（无文字标注） -->
+    <div class="image-container" id="red-image">
+      <img src="Picture 1.jpg" alt="Red Artwork" />
+    </div>
+    <div class="image-container" id="yellow-image">
+      <img src="Picture 3.jpg" alt="Yellow Artwork" />
+    </div>
+    <div class="image-container" id="blue-image">
+      <img src="Picture 2.jpg" alt="Blue Artwork" />
     </div>
 
-    <details>
-      <summary>
-        Q1: What was the first thing you paid attention to when interacting with
-        the experience?
-      </summary>
-      <div class="answer-box">
-        I noticed the parallax movement in the 3D scene as the mouse moved,
-        creating spatial immersion and making the interface feel interactive and
-        alive.
-      </div>
-    </details>
+    <div class="cursor"></div>
+    <h1>Synesthesia Experience</h1>
+    <p>Discover the artistic soul within you through colors and sounds</p>
+    <button class="start-btn" onclick="window.location.href='intro.html'">
+      Brief Introduction
+    </button>
 
-    <details>
-      <summary>
-        Q2: Spend two minutes with the experience and create a list of each of
-        your discrete actions.
-      </summary>
-      <div class="answer-box">
-        Mouse movement, hover effects, scroll-triggered transitions, button
-        clicks, 3D object interactions (like shooting, dragging, toggling), and
-        dynamic scene replacements based on thumbnail clicks.
-      </div>
-    </details>
+    <script>
+      let mouseX = 0;
+      let mouseY = 0;
+      let noteInterval;
+      const cursor = document.querySelector(".cursor");
 
-    <details>
-      <summary>
-        Q3: What part of the experience did you spend the most time engaging
-        with?
-      </summary>
-      <div class="answer-box">
-        The interactive 3D objects — especially the mini-games like
-        basketball/soccer scenes — where clicking and feedback made me want to
-        experiment repeatedly.
-      </div>
-    </details>
+      const redCircle = document.getElementById("red-circle");
+      const yellowCircle = document.getElementById("yellow-circle");
+      const blueCircle = document.getElementById("blue-circle");
+      const redImage = document.getElementById("red-image");
+      const yellowImage = document.getElementById("yellow-image");
+      const blueImage = document.getElementById("blue-image");
 
-    <details>
-      <summary>
-        Q4: What was the most common action in your two minute interaction with
-        the experience?
-      </summary>
-      <div class="answer-box">
-        Mouse hover and scrolling were the most repeated actions — used to
-        navigate scenes and reveal microinteractions.
-      </div>
-    </details>
+      const circleStates = {
+        red: { fixed: false, circle: redCircle, image: redImage },
+        yellow: { fixed: false, circle: yellowCircle, image: yellowImage },
+        blue: { fixed: false, circle: blueCircle, image: blueImage },
+      };
 
-    <details>
-      <summary>
-        Q5: What is your impression of the intended primary goal of the
-        interactive experience?
-      </summary>
-      <div class="answer-box">
-        The goal is immersive brand storytelling and exploration — using
-        interactivity to enhance user engagement and deliver information in a
-        playful way.
-      </div>
-    </details>
+      function initImageContainers() {
+        positionImageContainer(redCircle, redImage);
+        positionImageContainer(yellowCircle, yellowImage);
+        positionImageContainer(blueCircle, blueImage);
+      }
 
-    <details>
-      <summary>
-        Q6: How does the interactive experience communicate this primary goal?
-      </summary>
-      <div class="answer-box">
-        It uses dynamic visual feedback, 3D animations, scroll effects, and
-        reactive UI components to encourage discovery and play.
-      </div>
-    </details>
+      function positionImageContainer(circle, imageContainer) {
+        const circleRect = circle.getBoundingClientRect();
+        imageContainer.style.width = circleRect.width + "px";
+        imageContainer.style.height = circleRect.height + "px";
+        imageContainer.style.left = circleRect.left + "px";
+        imageContainer.style.top = circleRect.top + "px";
+      }
 
-    <details>
-      <summary>
-        Q7: What is your impression of how the experience should be interacted
-        with over time?
-      </summary>
-      <div class="answer-box">
-        Designed for short but repeatable interactions — first visit for
-        exploration (3–5 mins), return visits to specific sections like app
-        previews or team info.
-      </div>
-    </details>
+      document.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        cursor.style.left = mouseX + "px";
+        cursor.style.top = mouseY + "px";
+      });
 
-    <details>
-      <summary>
-        Q8: How does the interactive experience communicate how it should be
-        interacted with over time?
-      </summary>
-      <div class="answer-box">
-        It uses scroll-reveal structures, expandable content, and replayable
-        elements (games, rewards) to suggest that it's worth coming back to.
-      </div>
-    </details>
+      function createMusicNote() {
+        const notes = ["♪", "♫", "♩", "♬", "♭", "♮"];
+        const colors = ["#ff4d4d", "#ffd93d", "#4da6ff"];
 
-    <details>
-      <summary>
-        Q9: What other media forms does the experience reference?
-      </summary>
-      <div class="answer-box">
-        Video games (UI/UX), interactive 3D sites (like Apple Vision Pro), and
-        immersive brand installation concepts (experience centers).
-      </div>
-    </details>
+        const note = document.createElement("div");
+        note.className = "music-note";
+        note.textContent = notes[Math.floor(Math.random() * notes.length)];
+        note.style.color = colors[Math.floor(Math.random() * colors.length)];
+        note.style.left = mouseX + "px";
+        note.style.top = mouseY + "px";
+        note.style.fontSize = Math.random() * 20 + 16 + "px";
+        note.style.animationDuration = Math.random() * 5 + 5 + "s";
+        document.body.appendChild(note);
+        setTimeout(() => note.remove(), 10000);
+      }
 
-    <details>
-      <summary>
-        Q10: What does this reference communicate to you about how you should
-        act when engaging with the experience?
-      </summary>
-      <div class="answer-box">
-        It tells me to interact actively, like a player in a game — try
-        clicking, dragging, exploring, and even "breaking" elements to find
-        more.
-      </div>
-    </details>
+      document.addEventListener("mousemove", () => {
+        if (!noteInterval) {
+          createMusicNote();
+          noteInterval = setTimeout(() => (noteInterval = null), 200);
+        }
+      });
 
-    <details>
-      <summary>
-        Q11: What does this reference communicate to you about how you should
-        feel when engaging with the experience?
-      </summary>
-      <div class="answer-box">
-        Curious, playful, immersed — like exploring a fun and beautifully
-        designed playground where discovery is rewarded.
-      </div>
-    </details>
+      function setupCircleInteractions(color) {
+        const { circle, image } = circleStates[color];
 
-    <details>
-      <summary>
-        Q12: What is the most frustrating part of the interaction to you and
-        what makes that part frustrating?
-      </summary>
-      <div class="answer-box">
-        Some interactive objects are not clearly signposted as clickable. The
-        transitions are sometimes too long or unskippable, which slows down
-        flow.
-      </div>
-    </details>
+        circle.addEventListener("mouseenter", () => {
+          if (!circleStates[color].fixed) {
+            positionImageContainer(circle, image);
+            image.style.opacity = "1";
+          }
+        });
 
-    <details>
-      <summary>
-        Q13: What is the most satisfying part of the interaction to you and what
-        makes that part satisfying?
-      </summary>
-      <div class="answer-box">
-        The mini-game elements (like shooting/goal scoring) and responsive UI
-        transitions made the experience engaging and visually rewarding.
-      </div>
-    </details>
+        circle.addEventListener("mouseleave", () => {
+          if (!circleStates[color].fixed) {
+            image.style.opacity = "0";
+          }
+        });
 
-    <!-- Second image with same styling but different link -->
-    <div class="image-container">
-      <img src="luni2.png" alt="Luni Life section" />
-      <a href="https://www.luni.app/luni-life" class="image-overlay"></a>
-    </div>
+        circle.addEventListener("click", () => {
+          circleStates[color].fixed = !circleStates[color].fixed;
+          circle.style.opacity = circleStates[color].fixed ? "0" : "0.6";
+          image.style.opacity = circleStates[color].fixed ? "1" : "0";
+        });
+      }
+
+      window.addEventListener("load", () => {
+        document.body.style.cursor = "none";
+        initImageContainers();
+        setupCircleInteractions("red");
+        setupCircleInteractions("yellow");
+        setupCircleInteractions("blue");
+      });
+    </script>
   </body>
 </html>
