@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Synesthesia Psychological Test</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+        background-color: #1a1a1a;
+        cursor: none;
+        overflow: hidden;
+        color: white;
+        text-align: center;
+      }
+      .background-gradient,
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+      }
+      .background-gradient {
+        z-index: -2;
+        transition: background 0.2s ease;
+      }
+      .overlay {
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+      }
+      .cursor {
+        position: fixed;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        z-index: 9999;
+        mix-blend-mode: screen;
+      }
+      .music-note {
+        position: fixed;
+        opacity: 0.5;
+        font-size: 24px;
+        pointer-events: none;
+        z-index: 9998;
+        animation: falling linear forwards;
+      }
+      @keyframes falling {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0.5;
+        }
+        100% {
+          transform: translateY(100vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+      h1 {
+        margin-top: 80px;
+        font-size: 3rem;
+        background: linear-gradient(90deg, #ff4d4d, #ffd93d, #4da6ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 5s infinite;
+      }
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      .question-container {
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        max-width: 800px;
+        margin: 50px auto;
+        opacity: 0;
+        transform: scale(0.95);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+      .question-container.active {
+        opacity: 1;
+        transform: scale(1);
+      }
+      .question-image {
+        width: 250px;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 15px;
+        margin: 20px 0;
+      }
+      .answers {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .answer-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+      }
+      .answer-option input[type="radio"] {
+        transform: scale(1.5);
+        cursor: pointer;
+      }
+      .answer-option button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+      .answer-option button:hover {
+        color: #ffd93d;
+      }
+      .next-btn {
+        margin-top: 30px;
+        padding: 10px 30px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        color: white;
+        background: linear-gradient(135deg, #ff4d4d, #ffd93d, #4da6ff);
+        transition: transform 0.3s ease;
+      }
+      .next-btn:hover {
+        transform: scale(1.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background-gradient"></div>
+    <div class="overlay"></div>
+    <div class="cursor"></div>
+
+    <h1>Welcome to Synesthesia Psychological Test</h1>
+    <div id="questions"></div>
+
+    <script>
+      const questions = [
+        {
+          text: "Q1. What sound do you associate with a large area of red in Kandinsky's painting?",
+          image: "Picture 4.jpg",
+          audio: "1",
+        },
+        {
+          text: "Q2. What sound comes to mind when you see blue color blocks?",
+          image: "Picture 2.jpg",
+          audio: "2",
+        },
+        {
+          text: "Q3. Kandinsky's jumping yellow makes you think of which sound?",
+          image: "Picture 3.jpg",
+          audio: "3",
+        },
+        {
+          text: "Q4. Red and black intertwined: what rhythm do you feel?",
+          image: "Picture 1.jpg",
+          audio: "4",
+        },
+        {
+          text: "Q5. Purple dominated abstract shapes make you think of?",
+          image: "Picture 5.jpg",
+          audio: "5",
+        },
+        {
+          text: "Q6. White dots on dark background remind you of which sound?",
+          image: "Picture 1.jpg",
+          audio: "6",
+        },
+        {
+          text: "Q7. When orange and green collide, what sound scene do you imagine?",
+          image: "Picture 2.jpg",
+          audio: "7",
+        },
+        {
+          text: "Q8. A large area of grey makes you feel which sound?",
+          image: "Picture 3.jpg",
+          audio: "8",
+        },
+        {
+          text: "Q9. Dynamic lines and color swirls remind you of?",
+          image: "Picture 4.jpg",
+          audio: "9",
+        },
+        {
+          text: "Q10. Which instrument would you choose to score Kandinsky’s paintings?",
+          image: "Picture 5.jpg",
+          audio: null,
+          textAnswers: [
+            "A. trumpet, highlighting A strong color impact",
+            "B. Piano, presenting delicate color gradations",
+            "C. Flute, expressing the ethereal artistic conception of the picture",
+            "D. Drum kit, emphasizing the dynamic rhythm of the picture",
+          ],
+        },
+      ];
+
+      let currentAudio = null;
+      let currentIndex = 0;
+
+      function playAudio(src) {
+        if (currentAudio && !currentAudio.paused) {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+        }
+        currentAudio = new Audio(src);
+        currentAudio.play();
+      }
+
+      function showQuestion(index) {
+        const container = document.getElementById("questions");
+        container.innerHTML = "";
+
+        if (index >= questions.length) {
+          container.innerHTML = `<h2>Test Completed!</h2><p>Thank you for participating.</p>`;
+          return;
+        }
+
+        const q = questions[index];
+        const div = document.createElement("div");
+        div.className = "question-container active";
+        div.innerHTML = `
+  <h2>${q.text}</h2>
+  <img src="${q.image}" class="question-image" alt="Question Image" />
+  <div class="answers">
+    ${
+      q.audio
+        ? ["A", "B", "C", "D"]
+            .map(
+              (option) => `
+      <label class="answer-option">
+        <input type="radio" name="q${index + 1}" value="${option}" />
+        <span>${option}</span>
+        <button onclick="playAudio('audio/${q.audio}${option}.mp3')">▶️</button>
+      </label>
+    `
+            )
+            .join("")
+        : q.textAnswers
+            .map(
+              (answer, idx) => `
+      <label class="answer-option">
+        <input type="radio" name="q${index + 1}" value="${String.fromCharCode(
+                65 + idx
+              )}" />
+        <span>${answer}</span>
+      </label>
+    `
+            )
+            .join("")
+    }
+  </div>
+  <button class="next-btn" onclick="nextQuestion()">${
+    index === questions.length - 1 ? "Finish" : "Next"
+  }</button>
+`;
+
+        container.appendChild(div);
+      }
+
+      function nextQuestion() {
+        if (currentAudio && !currentAudio.paused) {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+        }
+        currentIndex++;
+        showQuestion(currentIndex);
+      }
+
+      showQuestion(currentIndex);
+
+      // Background and Cursor
+      const gradientBackground = document.querySelector(".background-gradient");
+      const cursor = document.querySelector(".cursor");
+      let mouseX = 0,
+        mouseY = 0;
+
+      document.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      function updateCursor() {
+        cursor.style.left = `${mouseX}px`;
+        cursor.style.top = `${mouseY}px`;
+        requestAnimationFrame(updateCursor);
+      }
+      updateCursor();
+
+      document.addEventListener("mousemove", (e) => {
+        const percentage = (e.clientX / window.innerWidth) * 100;
+        gradientBackground.style.background = `linear-gradient(90deg, 
+    #ff4d4d ${percentage - 20}%, 
+    #ffd93d ${percentage}%, 
+    #4da6ff ${percentage + 20}%)`;
+      });
+
+      // Optimized Music Note Effect
+      let lastNoteTime = 0;
+      const NOTE_INTERVAL = 500;
+
+      document.addEventListener("mousemove", () => {
+        const now = Date.now();
+        if (now - lastNoteTime > NOTE_INTERVAL) {
+          createMusicNote(mouseX, mouseY);
+          lastNoteTime = now;
+        }
+      });
+
+      function createMusicNote(x, y) {
+        const notes = ["♪", "♫", "♩", "♬", "♭", "♮"];
+        const colors = ["#ff4d4d", "#ffd93d", "#4da6ff"];
+        const note = document.createElement("div");
+        note.className = "music-note";
+        note.textContent = notes[Math.floor(Math.random() * notes.length)];
+        note.style.color = colors[Math.floor(Math.random() * colors.length)];
+        note.style.left = `${x}px`;
+        note.style.top = `${y}px`;
+        note.style.fontSize = `${Math.random() * 20 + 16}px`;
+        note.style.position = "fixed";
+        note.style.opacity = "0.5";
+        note.style.pointerEvents = "none";
+        note.style.zIndex = "9998";
+
+        const duration = Math.random() * 2 + 3; // 3-5秒动画时间
+        note.style.animation = `falling ${duration}s linear forwards`;
+
+        document.body.appendChild(note);
+        setTimeout(() => note.remove(), duration * 1000);
+      }
+    </script>
+  </body>
+</html>
