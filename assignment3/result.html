@@ -3,9 +3,87 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Test Result</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+        background-color: #1a1a1a;
+        color: white;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      h1 {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        background: linear-gradient(90deg, #ff4d4d, #ffd93d, #4da6ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 5s infinite;
+      }
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      p {
+        max-width: 600px;
+        font-size: 1.2rem;
+        line-height: 1.6;
+        margin: 20px;
+      }
+      .back-btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        color: white;
+        background: linear-gradient(135deg, #ff4d4d, #ffd93d, #4da6ff);
+        transition: transform 0.3s ease;
+        margin-top: 30px;
+      }
+      .back-btn:hover {
+        transform: scale(1.1);
+      }
+    </style>
   </head>
   <body>
-    <h1>Hello work</h1>
+    <h1>Your Artistic Personality</h1>
+    <p id="result-description"></p>
+    <button class="back-btn" onclick="location.href='test.html'">
+      Take the Test Again
+    </button>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const result = params.get("result");
+
+      const descriptions = {
+        A: "<strong>Expressive & Extroverted</strong><br/>You perceive colors and sounds with passion and power. You tend to express emotions through intense, vibrant elements and have a lively, energetic personality. You love bold, impactful art styles.",
+        B: "<strong>Deep & Reflective</strong><br/>You focus on the emotional depth behind colors and sounds. With an introverted nature, you excel at interpreting complex emotions through abstract art and prefer calm, soothing mediums to express your inner world.",
+        C: "<strong>Playful & Imaginative</strong><br/>Your perception is lively and full of creativity. You are highly sensitive to colors and sounds, with a curious, imaginative personality. You enjoy exploring innovative and avant-garde artistic expressions.",
+        D: "<strong>Bold & Experimental</strong><br/>Your understanding of art is unique and rebellious. You constantly seek originality and unconventional ideas, easily captivated by experimental and disruptive forms of artistic expression.",
+      };
+
+      const resultDescription = document.getElementById("result-description");
+      resultDescription.innerHTML =
+        descriptions[result] || "Result not found. Please retake the test.";
+    </script>
   </body>
 </html>

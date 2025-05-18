@@ -212,6 +212,7 @@
         },
       ];
 
+      const answerCount = { A: 0, B: 0, C: 0, D: 0 };
       let currentAudio = null;
       let currentIndex = 0;
 
@@ -237,41 +238,42 @@
         const div = document.createElement("div");
         div.className = "question-container active";
         div.innerHTML = `
-  <h2>${q.text}</h2>
-  <img src="${q.image}" class="question-image" alt="Question Image" />
-  <div class="answers">
-    ${
-      q.audio
-        ? ["A", "B", "C", "D"]
-            .map(
-              (option) => `
-      <label class="answer-option">
-        <input type="radio" name="q${index + 1}" value="${option}" />
-        <span>${option}</span>
-        <button onclick="playAudio('audio/${q.audio}${option}.mp3')">▶️</button>
-      </label>
-    `
-            )
-            .join("")
-        : q.textAnswers
-            .map(
-              (answer, idx) => `
-      <label class="answer-option">
-        <input type="radio" name="q${index + 1}" value="${String.fromCharCode(
-                65 + idx
-              )}" />
-        <span>${answer}</span>
-      </label>
-    `
-            )
-            .join("")
-    }
-  </div>
-  <button class="next-btn" onclick="nextQuestion()">${
-    index === questions.length - 1 ? "Finish" : "Next"
-  }</button>
-`;
-
+        <h2>${q.text}</h2>
+        <img src="${q.image}" class="question-image" alt="Question Image" />
+        <div class="answers">
+          ${
+            q.audio
+              ? ["A", "B", "C", "D"]
+                  .map(
+                    (option) => `
+                  <label class="answer-option">
+                    <input type="radio" name="q${
+                      index + 1
+                    }" value="${option}" />
+                    <span>${option}</span>
+                    <button onclick="playAudio('audio/${
+                      q.audio
+                    }${option}.mp3')">▶️</button>
+                  </label>`
+                  )
+                  .join("")
+              : q.textAnswers
+                  .map(
+                    (answer, idx) => `
+                  <label class="answer-option">
+                    <input type="radio" name="q${
+                      index + 1
+                    }" value="${String.fromCharCode(65 + idx)}" />
+                    <span>${answer}</span>
+                  </label>`
+                  )
+                  .join("")
+          }
+        </div>
+        <button class="next-btn" onclick="nextQuestion()">${
+          index === questions.length - 1 ? "Finish" : "Next"
+        }</button>
+      `;
         container.appendChild(div);
       }
 
@@ -280,13 +282,31 @@
           currentAudio.pause();
           currentAudio.currentTime = 0;
         }
+
+        const selected = document.querySelector(
+          `input[name="q${currentIndex + 1}"]:checked`
+        );
+        if (selected) {
+          const value = selected.value;
+          if (answerCount[value] !== undefined) {
+            answerCount[value]++;
+          }
+        }
+
         currentIndex++;
-        showQuestion(currentIndex);
+        if (currentIndex >= questions.length) {
+          const maxChoice = Object.entries(answerCount).reduce((a, b) =>
+            a[1] >= b[1] ? a : b
+          )[0];
+          window.location.href = `result.html?result=${maxChoice}`;
+        } else {
+          showQuestion(currentIndex);
+        }
       }
 
       showQuestion(currentIndex);
 
-      // Background and Cursor
+      // Cursor and Background
       const gradientBackground = document.querySelector(".background-gradient");
       const cursor = document.querySelector(".cursor");
       let mouseX = 0,
@@ -306,13 +326,12 @@
 
       document.addEventListener("mousemove", (e) => {
         const percentage = (e.clientX / window.innerWidth) * 100;
-        gradientBackground.style.background = `linear-gradient(90deg, 
-    #ff4d4d ${percentage - 20}%, 
-    #ffd93d ${percentage}%, 
-    #4da6ff ${percentage + 20}%)`;
+        gradientBackground.style.background = `linear-gradient(90deg, #ff4d4d ${
+          percentage - 20
+        }%, #ffd93d ${percentage}%, #4da6ff ${percentage + 20}%)`;
       });
 
-      // Optimized Music Note Effect
+      // Music Note Effect
       let lastNoteTime = 0;
       const NOTE_INTERVAL = 500;
 
@@ -339,9 +358,8 @@
         note.style.pointerEvents = "none";
         note.style.zIndex = "9998";
 
-        const duration = Math.random() * 2 + 3; // 3-5秒动画时间
+        const duration = Math.random() * 2 + 3;
         note.style.animation = `falling ${duration}s linear forwards`;
-
         document.body.appendChild(note);
         setTimeout(() => note.remove(), duration * 1000);
       }
