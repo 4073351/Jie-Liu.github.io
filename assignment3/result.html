@@ -16,15 +16,12 @@
         background-color: #1a1a1a;
         color: white;
         text-align: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
+        overflow: hidden;
+        cursor: none;
       }
       h1 {
         font-size: 3rem;
-        margin-bottom: 20px;
+        margin-top: 80px;
         background: linear-gradient(90deg, #ff4d4d, #ffd93d, #4da6ff);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -45,7 +42,7 @@
         max-width: 600px;
         font-size: 1.2rem;
         line-height: 1.6;
-        margin: 20px;
+        margin: 20px auto;
       }
       .back-btn {
         padding: 12px 30px;
@@ -61,29 +58,205 @@
       .back-btn:hover {
         transform: scale(1.1);
       }
+
+      .cursor {
+        position: fixed;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        z-index: 9999;
+        mix-blend-mode: screen;
+      }
+      .music-note {
+        position: fixed;
+        opacity: 0.5;
+        font-size: 24px;
+        pointer-events: none;
+        z-index: 9998;
+        animation: falling linear forwards;
+      }
+      @keyframes falling {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0.5;
+        }
+        100% {
+          transform: translateY(100vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+      .circle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.8;
+        animation: float 3s ease-in-out infinite alternate;
+        transition: filter 0.3s, transform 0.3s;
+      }
+      .circle:hover {
+        filter: brightness(1.5);
+      }
+      @keyframes float {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(-20px);
+        }
+      }
     </style>
   </head>
   <body>
+    <div class="cursor"></div>
     <h1>Your Artistic Personality</h1>
     <p id="result-description"></p>
     <button class="back-btn" onclick="location.href='test.html'">
       Take the Test Again
     </button>
 
+    <!-- Red, Yellow, Blue Circles (Fixed Positions) -->
+    <div
+      class="circle"
+      style="
+        width: 100px;
+        height: 100px;
+        left: 10%;
+        top: 30%;
+        background: #ff4d4d;
+      "
+      onclick="drop(this)"
+    ></div>
+    <div
+      class="circle"
+      style="
+        width: 80px;
+        height: 80px;
+        left: 80%;
+        top: 20%;
+        background: #ffd93d;
+      "
+      onclick="drop(this)"
+    ></div>
+    <div
+      class="circle"
+      style="
+        width: 90px;
+        height: 90px;
+        left: 20%;
+        top: 70%;
+        background: #4da6ff;
+      "
+      onclick="drop(this)"
+    ></div>
+    <div
+      class="circle"
+      style="
+        width: 120px;
+        height: 120px;
+        left: 60%;
+        top: 60%;
+        background: #ff4d4d;
+      "
+      onclick="drop(this)"
+    ></div>
+    <div
+      class="circle"
+      style="
+        width: 70px;
+        height: 70px;
+        left: 30%;
+        top: 40%;
+        background: #ffd93d;
+      "
+      onclick="drop(this)"
+    ></div>
+    <div
+      class="circle"
+      style="
+        width: 110px;
+        height: 110px;
+        left: 75%;
+        top: 75%;
+        background: #4da6ff;
+      "
+      onclick="drop(this)"
+    ></div>
+
     <script>
       const params = new URLSearchParams(window.location.search);
       const result = params.get("result");
-
       const descriptions = {
         A: "<strong>Expressive & Extroverted</strong><br/>You perceive colors and sounds with passion and power. You tend to express emotions through intense, vibrant elements and have a lively, energetic personality. You love bold, impactful art styles.",
         B: "<strong>Deep & Reflective</strong><br/>You focus on the emotional depth behind colors and sounds. With an introverted nature, you excel at interpreting complex emotions through abstract art and prefer calm, soothing mediums to express your inner world.",
         C: "<strong>Playful & Imaginative</strong><br/>Your perception is lively and full of creativity. You are highly sensitive to colors and sounds, with a curious, imaginative personality. You enjoy exploring innovative and avant-garde artistic expressions.",
         D: "<strong>Bold & Experimental</strong><br/>Your understanding of art is unique and rebellious. You constantly seek originality and unconventional ideas, easily captivated by experimental and disruptive forms of artistic expression.",
       };
-
-      const resultDescription = document.getElementById("result-description");
-      resultDescription.innerHTML =
+      document.getElementById("result-description").innerHTML =
         descriptions[result] || "Result not found. Please retake the test.";
+
+      // Cursor and Music Notes
+      const cursor = document.querySelector(".cursor");
+      let mouseX = 0,
+        mouseY = 0;
+      document.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+      function updateCursor() {
+        cursor.style.left = `${mouseX}px`;
+        cursor.style.top = `${mouseY}px`;
+        requestAnimationFrame(updateCursor);
+      }
+      updateCursor();
+
+      let lastNoteTime = 0;
+      const NOTE_INTERVAL = 300;
+      document.addEventListener("mousemove", () => {
+        const now = Date.now();
+        if (now - lastNoteTime > NOTE_INTERVAL) {
+          createMusicNote(mouseX, mouseY);
+          lastNoteTime = now;
+        }
+      });
+
+      function createMusicNote(x, y) {
+        const notes = ["♪", "♫", "♩", "♬", "♭", "♮"];
+        const colors = ["#ff4d4d", "#ffd93d", "#4da6ff"];
+        const note = document.createElement("div");
+        note.className = "music-note";
+        note.textContent = notes[Math.floor(Math.random() * notes.length)];
+        note.style.color = colors[Math.floor(Math.random() * colors.length)];
+        note.style.left = `${x}px`;
+        note.style.top = `${y}px`;
+        note.style.fontSize = `${Math.random() * 20 + 16}px`;
+        note.style.animationDuration = `${Math.random() * 5 + 5}s`;
+        document.body.appendChild(note);
+        setTimeout(() => note.remove(), 8000);
+      }
+
+      // Circle Drop Physics Effect
+      function drop(circle) {
+        const startTop = parseFloat(circle.style.top);
+        let position = startTop;
+        let velocity = 0;
+        const gravity = 0.5;
+        const bounce = 0.6;
+        function fall() {
+          velocity += gravity;
+          position += velocity;
+          if (position >= 90) {
+            // Bottom hit simulation
+            velocity *= -bounce;
+            position = 90;
+            if (Math.abs(velocity) < 1) return;
+          }
+          circle.style.top = `${position}%`;
+          requestAnimationFrame(fall);
+        }
+        fall();
+      }
     </script>
   </body>
 </html>
